@@ -1,3 +1,5 @@
+# This is a fork of [aqualxx's stable UI project](https://github.com/aqualxx/stable-ui)
+
 # stable-ui 🔥
 
 [Stable UI](https://aqualxx.github.io/stable-ui/) is a web user interface designed to generate, save, and view images using Stable Diffusion, with the goal being able to provide Stable Diffusion to anyone for 100% free.
