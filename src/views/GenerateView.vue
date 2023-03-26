@@ -103,6 +103,26 @@ function onDimensionsChange() {
     canvasStore.updateCropPreview();
 }
 
+const availablePostProcessors = computed(() => {
+    const upscalersDisabled = 
+        store.postProcessors.includes("RealESRGAN_x4plus_anime_6B") ||
+        store.postProcessors.includes("RealESRGAN_x4plus") ||
+        store.postProcessors.includes("NMKD_Siax") ||
+        store.postProcessors.includes("4x_AnimeSharp");
+
+    const upscalerDisabled = (name: string) => !store.postProcessors.includes(name as any) && upscalersDisabled;
+
+    return [
+        "GFPGAN",
+        "CodeFormers",
+        { label: "RealESRGAN_x4plus", value: "RealESRGAN_x4plus", disabled: upscalerDisabled("RealESRGAN_x4plus") }, 
+        { label: "RealESRGAN_x4plus_anime_6B", value: "RealESRGAN_x4plus_anime_6B", disabled: upscalerDisabled("RealESRGAN_x4plus_anime_6B") },
+        { label: "NMKD_Siax", value: "NMKD_Siax", disabled: upscalerDisabled("NMKD_Siax") },
+        { label: "4x_AnimeSharp", value: "4x_AnimeSharp", disabled: upscalerDisabled("4x_AnimeSharp") },
+        "strip_background"
+    ]
+})
+
 disableBadge();
 handleUrlParams();
 </script>
@@ -198,7 +218,7 @@ handleUrlParams();
                         <form-select label="Control Type(s)" prop="controlTypes"  v-model="store.multiSelect.controlType.selected" :options="store.availableControlTypes"                   info="Multi-select enabled. Greatly helps to keep image composition, but causes generations to be 3x slower and cost 3x as much kudos." multiple v-if="store.generatorType !== 'Text2Img' && store.multiSelect.controlType.enabled" />
                         <form-select label="Control Type"    prop="controlType"   v-model="store.controlType"                      :options="store.availableControlTypes"                   info="Greatly helps to keep image composition, but causes generations to be 3x slower and cost 3x as much kudos." v-if="store.generatorType !== 'Text2Img' && !store.multiSelect.controlType.enabled" />
                         <form-model-select />
-                        <form-select label="Post-processors" prop="postProcess"   v-model="store.postProcessors"   :options="store.availablePostProcessors" info="GPFGAN: Improves faces   RealESRGAN_x4plus: Upscales by 4x   CodeFormers: Improves faces  RealESRGAN_x4plus_anime_6b: Upscales by 4x, tuned for anime     strip_background: Removes the background of an image" multiple />
+                        <form-select label="Post-processors" prop="postProcess"   v-model="store.postProcessors"   :options="availablePostProcessors" info="GPFGAN: Improves faces   RealESRGAN_x4plus: Upscales by 4x   CodeFormers: Improves faces  RealESRGAN_x4plus_anime_6b: Upscales by 4x, tuned for anime     strip_background: Removes the background of an image" multiple />
                         <el-row>
                             <el-col :span="isMobile ? 24 : 12">
                                 <form-switch label="Hi-res fix"       prop="hiresFix" v-model="store.params.hires_fix" info="May make high resolution images more coherent. Only works with Text2Img." :disabled="store.generatorType !== 'Text2Img' || store.multiSelect.hiResFix.enabled" />
